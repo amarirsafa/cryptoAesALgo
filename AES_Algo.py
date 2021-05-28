@@ -1,6 +1,7 @@
 
 
 import string
+from unittest import result
 import numpy as np
 from collections import deque
 
@@ -199,34 +200,70 @@ def mixColumn(shiftedMatrix):
     mixColumn4=[]
     mixColumn16=[]
     mixColumn=[]
-    for i in range(0,len(C)):
-        for j in range(0,len(C[i])):
-            for x in range(0,len(shiftedMatrix)): #to find the matrix
+    for x in range(0,len(shiftedMatrix)): #iterate through all matrix
+        for i in range(0,len(C)): #iterate through raws of C
+            for y in range(0,len(shiftedMatrix[x][0])): #iterate through 
                 result="0"
-                for y in range(0,len(shiftedMatrix[x])): #to find the ling in the matrix
-                    for t in range(0,len(shiftedMatrix[x][y])): # to find the one element in each line
-                        if C[i][j] == 1:
-                            result = hex(int(result,base=16) ^ int(shiftedMatrix[x][y][t],base=16))
-                        else :
-                            if len(shiftedMatrix[x][y][t]) == 2:
-                                tempo = int(shiftedMatrix[x][y][t][0],16)
-                                tempo1 = int(shiftedMatrix[x][y][t][1],16)
-                                if C[i][j] == 2:
-                                    result = hex(int(result,base=16) ^ int(hex(int(by2[tempo][tempo1]))[2:].upper(),base=16))
-                                if C[i][j] == 3:
-                                    result = hex(int(result,base=16) ^ int(hex(int(by3[tempo][tempo1]))[2:].upper(),base=16))
-                            elif len(shiftedMatrix[x][y][t]) == 1:
-                                tempo = int(shiftedMatrix[x][y][t][0],16)
-                                if C[i][j] == 2:
-                                    result = hex(int(result,base=16) ^ int(hex(int(by2[0][tempo]))[2:].upper(),base=16))
-                                if C[i][j] == 3:
-                                    result = hex(int(result,base=16) ^ int(hex(int(by3[0][tempo]))[2:].upper(),base=16))
+                for t in range(0,len(shiftedMatrix[x])): #iterate through raws of shiftedMatrix
+                    if C[i][t] == 1:
+                        result = hex(int(result,base=16) ^ int(shiftedMatrix[x][t][y],base=16))
+                    else :
+                        if len(shiftedMatrix[x][t][y]) == 2:
+                            tempo = int(shiftedMatrix[x][t][y][0],16)
+                            tempo1 = int(shiftedMatrix[x][t][y][1],16)
+                            if C[i][t] == 2:
+                                result = hex(int(result,base=16) ^ int(hex(int(by2[tempo][tempo1]))[2:].upper(),base=16))
+                            if C[i][t] == 3:
+                                result = hex(int(result,base=16) ^ int(hex(int(by3[tempo][tempo1]))[2:].upper(),base=16))
+                        elif len(shiftedMatrix[x][t][y]) == 1:
+                            tempo = int(shiftedMatrix[x][t][y][0],16)
+                            if C[i][t] == 2:
+                                result = hex(int(result,base=16) ^ int(hex(int(by2[0][tempo]))[2:].upper(),base=16))
+                            if C[i][t] == 3:
+                                result = hex(int(result,base=16) ^ int(hex(int(by3[0][tempo]))[2:].upper(),base=16))
                 mixColumn4.append(result)
             mixColumn16.append(mixColumn4)
             mixColumn4=[]
         mixColumn.append(mixColumn16)
-        mixColumn16=[] 
+        mixColumn16=[]
     return mixColumn
+
+
+                
+
+# def mixColumn(shiftedMatrix):
+#     mixColumn4=[]
+#     mixColumn16=[]
+#     mixColumn=[]
+#     for i in range(0,len(C)):
+#         for j in range(0,len(C[i])):
+#             for x in range(0,len(shiftedMatrix)): #to find the matrix
+#                 result="0"
+#                 for y in range(0,len(shiftedMatrix[x])): #to find the ling in the matrix
+#                     for t in range(0,len(shiftedMatrix[x][y])): # to find the one element in each line
+#                         if C[i][j] == 1:
+#                             result = hex(int(result,base=16) ^ int(shiftedMatrix[x][t][y],base=16))
+#                         else :
+#                             if len(shiftedMatrix[x][t][y]) == 2:
+#                                 tempo = int(shiftedMatrix[x][t][y][0],16)
+#                                 tempo1 = int(shiftedMatrix[x][t][y][1],16)
+#                                 if C[i][j] == 2:
+#                                     result = hex(int(result,base=16) ^ int(hex(int(by2[tempo][tempo1]))[2:].upper(),base=16))
+#                                 if C[i][j] == 3:
+#                                     result = hex(int(result,base=16) ^ int(hex(int(by3[tempo][tempo1]))[2:].upper(),base=16))
+#                             elif len(shiftedMatrix[x][t][y]) == 1:
+#                                 tempo = int(shiftedMatrix[x][y][t][0],16)
+#                                 if C[i][j] == 2:
+#                                     result = hex(int(result,base=16) ^ int(hex(int(by2[0][tempo]))[2:].upper(),base=16))
+#                                 if C[i][j] == 3:
+#                                     result = hex(int(result,base=16) ^ int(hex(int(by3[0][tempo]))[2:].upper(),base=16))
+#                         print("i j x y t ",i,j,x,y,t)
+#                 mixColumn4.append(result)
+#             mixColumn16.append(mixColumn4)
+#             mixColumn4=[]
+#         mixColumn.append(mixColumn16)
+#         mixColumn16=[] 
+#     return mixColumn
 
                     
            
@@ -236,5 +273,3 @@ for v in range(0,len(mixColumn)):
     print("Matrix number (after mixColumn)",v+1)
     for j in range(0,len(mixColumn[v])):
         print(mixColumn[v][j])
-
-        
