@@ -105,15 +105,15 @@ def runThroughSBox(hexaChunks):
         i=0
         for element1 in range(0,len(hexaChunks[element])):
             for element2 in range(0,len(hexaChunks[element][element1])):
-                tempo = int(hexaChunks[element][element1][element2][0],16)-1
-                tempo1 = int(hexaChunks[element][element1][element2][1],16)-1
+                tempo = int(hexaChunks[element][element1][element2][0],16)
+                tempo1 = int(hexaChunks[element][element1][element2][1],16)
                 if i<4:
-                    list4.append(hex(int(sBox[tempo][tempo1]))[2:].upper())
+                    list4.append(hex(int(sBox[tempo][tempo1]))[2:])
                     i+=1
                 else:
                     i=0
                     list4=[]
-                    list4.append(hex(int(sBox[tempo][tempo1]))[2:].upper())
+                    list4.append(hex(int(sBox[tempo][tempo1]))[2:])
                     i+=1
                 if len(list4)==4:
                     list16.append(list4)
@@ -201,35 +201,31 @@ def mixColumn(shiftedMatrix):
             for y in range(0,len(shiftedMatrix[x])): #iterate through 
                 result="0"
                 for t in range(0,len(shiftedMatrix[x])): #iterate through raws of shiftedMatrix
-                    tempo=0
-                    tempo1=0
-                    if shiftedMatrix[x][t][y][0] == "0" or shiftedMatrix[x][t][y][1] == "0":
-                        if shiftedMatrix[x][t][y][0] == "0":
-                            tempo = int(shiftedMatrix[x][t][y][0],16)
-                            if shiftedMatrix[x][t][y][1] != "0":
-                                tempo1=int(shiftedMatrix[x][t][y][0],16)-1
-                        elif shiftedMatrix[x][t][y][1] == "0":
-                            tempo1 = int(shiftedMatrix[x][t][y][1],16)
-                            if shiftedMatrix[x][t][y][0] != "0":
-                                tempo=int(shiftedMatrix[x][t][y][0],16)-1
-                    elif shiftedMatrix[x][t][y][0] == "0" and shiftedMatrix[x][t][y][1] == "0":
+                    if len(shiftedMatrix[x][t][y])==1:
                         tempo=int(shiftedMatrix[x][t][y][0],16)
-                        tempo1=int(shiftedMatrix[x][t][y][0],16)
+                        if C[i][t] == 1:
+                            #print(hex(int(result,base=16)),hex(int(shiftedMatrix[x][t][y],base=16)))
+                            result = hex(int(result,base=16) ^ int(shiftedMatrix[x][t][y],base=16))
+                        elif C[i][t] == 2:
+                            #print(hex(int(result,base=16)),hex(int(hex(int(by2[tempo][tempo1]))[2:].upper(),base=16)))
+                            result = hex(int(result,base=16) ^ int(hex(int(by2[0][tempo]))[2:],base=16))
+                        elif C[i][t] == 3:
+                            #print(hex(int(result,base=16)),hex(int(hex(int(by3[tempo][tempo1]))[2:].upper(),base=16)))
+                            result = hex( int(result,base=16) ^ int(hex(int(by3[0][tempo]))[2:],base=16))
                     else:
-                        tempo = int(shiftedMatrix[x][t][y][0],16)-1
-                        tempo1 = int(shiftedMatrix[x][t][y][1],16)-1
-
-                    if C[i][t] == 1:
-                        #print(hex(int(result,base=16)),hex(int(shiftedMatrix[x][t][y],base=16)))
-                        result = hex(int(result,base=16) ^ int(shiftedMatrix[x][t][y],base=16))
-                    elif C[i][t] == 2:
-                        #print(hex(int(result,base=16)),hex(int(hex(int(by2[tempo][tempo1]))[2:].upper(),base=16)))
-                        result = hex(int(result,base=16) ^ int(hex(int(by2[tempo][tempo1]))[2:].upper(),base=16))
-                    elif C[i][t] == 3:
-                        #print(hex(int(result,base=16)),hex(int(hex(int(by3[tempo][tempo1]))[2:].upper(),base=16)))
-                        result = hex( int(result,base=16) ^ int(hex(int(by3[tempo][tempo1]))[2:].upper(),base=16))
+                        tempo=int(shiftedMatrix[x][t][y][0],16)
+                        tempo1=int(shiftedMatrix[x][t][y][1],16)
+                        if C[i][t] == 1:
+                            #print(hex(int(result,base=16)),hex(int(shiftedMatrix[x][t][y],base=16)))
+                            result = hex(int(result,base=16) ^ int(shiftedMatrix[x][t][y],base=16))
+                        elif C[i][t] == 2:
+                            #print(hex(int(result,base=16)),hex(int(hex(int(by2[tempo][tempo1]))[2:].upper(),base=16)))
+                            result = hex(int(result,base=16) ^ int(hex(int(by2[tempo][tempo1]))[2:],base=16))
+                        elif C[i][t] == 3:
+                            #print(hex(int(result,base=16)),hex(int(hex(int(by3[tempo][tempo1]))[2:].upper(),base=16)))
+                            result = hex( int(result,base=16) ^ int(hex(int(by3[tempo][tempo1]))[2:],base=16))
                 mixColumn4.append(result)
-                #print("result",result)
+                print("result",result)
             mixColumn16.append(mixColumn4)
             mixColumn4=[]
         mixColumn.append(mixColumn16)
