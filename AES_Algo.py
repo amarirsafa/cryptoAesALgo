@@ -1,5 +1,3 @@
-
-
 import string
 from unittest import result
 import numpy as np
@@ -12,9 +10,11 @@ def getTextReady(clairMassage):
 # this functions main role is to take the text and to transform it into chunks of text, meaning to list of 16bytes.
     clairMassage=clairMassage.replace(" ","")
     if len(clairMassage)<16:
+        chunks=[]
         tempo=16-len(clairMassage)
         clairMassage=clairMassage+tempo*"0"
-        return clairMassage
+        chunks.append(clairMassage)
+        return chunks
     elif len(clairMassage)>16:
         n = 16 # chunk length
         chunks = [clairMassage[i:i+n] for i in range(0, len(clairMassage), n)]
@@ -27,8 +27,7 @@ def getTextReady(clairMassage):
         return clairMassage
     
 clairMassageChunks=getTextReady(clairMassage)
-print("_________________CLAIR MASSAGE AFTER BREAKING IT TI 16 BYTES : ")
-print(clairMassageChunks)
+print("_______CLAIR MASSAGE AFTER BREAKING IT TI 16 BYTES : ",clairMassageChunks)
 print("--------------------------------Stage zero--------------------------------")
 print("----------------------This is the stage of Hexadecimal--------------------")
 def convertChunksToHexa(clairMassageChuncks):
@@ -36,27 +35,30 @@ def convertChunksToHexa(clairMassageChuncks):
     #and organise them in matrix orders by raw
     hexaChunks=[] #list of the words after turning them to Hexa
     for element in clairMassageChunks:
-        hexaWords=[] #words after turning them into hexa
-        hexMatrixWords=[]
+        hexaChunks16=[] #words after turning them into hexa
+        hexaChunks4=[]
         i=0
         for char in element:
             if i<4:
-                hexMatrixWords.append(format(ord(char), "x"))
+                hexaChunks4.append(format(ord(char), "x"))
                 i+=1
             else:
                 i=0
-                hexMatrixWords=[]
-                hexMatrixWords.append(format(ord(char), "x"))
+                hexaChunks4=[]
+                hexaChunks4.append(format(ord(char), "x"))
                 i+=1
-            if len(hexMatrixWords)==4:
-                hexaWords.append(hexMatrixWords)
+            if len(hexaChunks4)==4:
+                hexaChunks16.append(hexaChunks4)
             else:
                 continue
-        hexaChunks.append(hexaWords)
-    
+        hexaChunks.append(hexaChunks16)
     return hexaChunks
 
 hexaChunks1 = convertChunksToHexa(clairMassageChunks)
+for index in range(0,len(hexaChunks1)):
+    print("Matrix number ",index+1)
+    for element in range(len(hexaChunks1[index])):
+        print(hexaChunks1[index][element],"\n")
 
 def transpose(hexaChunks1):
     #this function will switch the matrix to transpose cus i made a mistake in the ordering of the alphabets in the first matrix
@@ -81,8 +83,7 @@ for index in range(0,len(hexaChunks)):
 
 print("--------------------------------stage one--------------------------------")
 print("---------------------This is the stage of SuByte Table--------------------")
-sBox = [
-        [0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76],
+sBox = [[0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76],
         [0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0],
         [0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7, 0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15],
         [0x04, 0xc7, 0x23, 0xc3, 0x18, 0x96, 0x05, 0x9a, 0x07, 0x12, 0x80, 0xe2, 0xeb, 0x27, 0xb2, 0x75],
@@ -97,27 +98,26 @@ sBox = [
         [0xba, 0x78, 0x25, 0x2e, 0x1c, 0xa6, 0xb4, 0xc6, 0xe8, 0xdd, 0x74, 0x1f, 0x4b, 0xbd, 0x8b, 0x8a],
         [0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86, 0xc1, 0x1d, 0x9e],
         [0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e, 0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf],
-        [0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16]
-        ]
+        [0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16]]
 
 def runThroughSBox(hexaChunks):
     #this fucntion will return a list equivlent of hexmatrix in the table of sbox
     matrixs=[]
     list16=[]
     list4=[]
-    for element in range(len(hexaChunks)):
+    for element in range(0,len(hexaChunks)):
         i=0
-        for element1 in range(len(hexaChunks[element])):
+        for element1 in range(0,len(hexaChunks[element])):
             for element2 in range(0,len(hexaChunks[element][element1])):
                 tempo = int(hexaChunks[element][element1][element2][0],16)
                 tempo1 = int(hexaChunks[element][element1][element2][1],16)
                 if i<4:
-                    list4.append(hex(int(sBox[tempo][tempo1]))[2:].upper())
+                    list4.append(hex(int(sBox[tempo-1][tempo1-1]))[2:].upper())
                     i+=1
                 else:
                     i=0
                     list4=[]
-                    list4.append(hex(int(sBox[tempo][tempo1]))[2:].upper())
+                    list4.append(hex(int(sBox[tempo-1][tempo1-1]))[2:].upper())
                     i+=1
                 if len(list4)==4:
                     list16.append(list4)
@@ -202,7 +202,7 @@ def mixColumn(shiftedMatrix):
     mixColumn=[]
     for x in range(0,len(shiftedMatrix)): #iterate through all matrix
         for i in range(0,len(C)): #iterate through raws of C
-            for y in range(0,len(shiftedMatrix[x][0])): #iterate through 
+            for y in range(0,len(shiftedMatrix[x])): #iterate through 
                 result="0"
                 for t in range(0,len(shiftedMatrix[x])): #iterate through raws of shiftedMatrix
                     if C[i][t] == 1:
@@ -212,61 +212,21 @@ def mixColumn(shiftedMatrix):
                             tempo = int(shiftedMatrix[x][t][y][0],16)
                             tempo1 = int(shiftedMatrix[x][t][y][1],16)
                             if C[i][t] == 2:
-                                result = hex(int(result,base=16) ^ int(hex(int(by2[tempo][tempo1]))[2:].upper(),base=16))
+                                result = hex(int(result,base=16) ^ int(hex(int(by2[tempo-1][tempo1-1]))[2:].upper(),base=16))
                             if C[i][t] == 3:
-                                result = hex(int(result,base=16) ^ int(hex(int(by3[tempo][tempo1]))[2:].upper(),base=16))
+                                result = hex(int(result,base=16) ^ int(hex(int(by3[tempo-1][tempo1-1]))[2:].upper(),base=16))
                         elif len(shiftedMatrix[x][t][y]) == 1:
                             tempo = int(shiftedMatrix[x][t][y][0],16)
                             if C[i][t] == 2:
-                                result = hex(int(result,base=16) ^ int(hex(int(by2[0][tempo]))[2:].upper(),base=16))
+                                result = hex(int(result,base=16) ^ int(hex(int(by2[0][tempo-1]))[2:].upper(),base=16))
                             if C[i][t] == 3:
-                                result = hex(int(result,base=16) ^ int(hex(int(by3[0][tempo]))[2:].upper(),base=16))
+                                result = hex(int(result,base=16) ^ int(hex(int(by3[0][tempo-1]))[2:].upper(),base=16))
                 mixColumn4.append(result)
             mixColumn16.append(mixColumn4)
             mixColumn4=[]
         mixColumn.append(mixColumn16)
         mixColumn16=[]
     return mixColumn
-
-
-                
-
-# def mixColumn(shiftedMatrix):
-#     mixColumn4=[]
-#     mixColumn16=[]
-#     mixColumn=[]
-#     for i in range(0,len(C)):
-#         for j in range(0,len(C[i])):
-#             for x in range(0,len(shiftedMatrix)): #to find the matrix
-#                 result="0"
-#                 for y in range(0,len(shiftedMatrix[x])): #to find the ling in the matrix
-#                     for t in range(0,len(shiftedMatrix[x][y])): # to find the one element in each line
-#                         if C[i][j] == 1:
-#                             result = hex(int(result,base=16) ^ int(shiftedMatrix[x][t][y],base=16))
-#                         else :
-#                             if len(shiftedMatrix[x][t][y]) == 2:
-#                                 tempo = int(shiftedMatrix[x][t][y][0],16)
-#                                 tempo1 = int(shiftedMatrix[x][t][y][1],16)
-#                                 if C[i][j] == 2:
-#                                     result = hex(int(result,base=16) ^ int(hex(int(by2[tempo][tempo1]))[2:].upper(),base=16))
-#                                 if C[i][j] == 3:
-#                                     result = hex(int(result,base=16) ^ int(hex(int(by3[tempo][tempo1]))[2:].upper(),base=16))
-#                             elif len(shiftedMatrix[x][t][y]) == 1:
-#                                 tempo = int(shiftedMatrix[x][y][t][0],16)
-#                                 if C[i][j] == 2:
-#                                     result = hex(int(result,base=16) ^ int(hex(int(by2[0][tempo]))[2:].upper(),base=16))
-#                                 if C[i][j] == 3:
-#                                     result = hex(int(result,base=16) ^ int(hex(int(by3[0][tempo]))[2:].upper(),base=16))
-#                         print("i j x y t ",i,j,x,y,t)
-#                 mixColumn4.append(result)
-#             mixColumn16.append(mixColumn4)
-#             mixColumn4=[]
-#         mixColumn.append(mixColumn16)
-#         mixColumn16=[] 
-#     return mixColumn
-
-                    
-           
 
 mixColumn=mixColumn(shiftedMatrix)
 for v in range(0,len(mixColumn)):
